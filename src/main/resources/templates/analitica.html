@@ -1,0 +1,146 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Analítica</title>
+    <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script type="text/javascript"
+            src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+<div align="center" style="width: 1000px;">
+    <h2>Analitica de datos sobre los empleados de la lista</h2>
+    <div id="histogramchart" style="width: 900px; height: 500px;"></div>
+    <div id="employeeschart" style="width: 900px; height: 500px;"></div>
+    <div id="salarypromchart" style="width: 900px; height: 500px;"></div>
+    <div id="salarychart" style="width: 900px; height: 500px;"></div>
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
+</div>
+<script th:inline="javascript">
+    var real_data = /*[[${chartData}]]*/'noValue';
+    var employeesCount_data = /*[[${pieCountData}]]*/'noValue';
+    var salaryProm_data = /*[[${salaryPromData}]]*/'noValue';
+    var salary_data = /*[[${salaryData}]]*/'noValue';
+    var employeesalary_data = /*[[${employeeSalaryData}]]*/'noValue';
+
+    $(document).ready(function() {
+        google.charts.load('current', {
+            packages : [ 'corechart', 'bar' ]
+        });
+        google.charts.setOnLoadCallback(drawChartCountEmployees);
+        google.charts.setOnLoadCallback(drawPieChart);
+        google.charts.setOnLoadCallback(drawChartSalaryProm);
+        google.charts.setOnLoadCallback(drawChartSalary);
+        google.charts.setOnLoadCallback(drawChartHistogramSalary);
+    });
+
+    function drawChartHistogramSalary() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Empleados');
+        data.addColumn('number', 'Salary');
+
+        Object.keys(employeesalary_data).forEach(function(key) {
+            data.addRow([ key, employeesalary_data[key] ]);
+        });
+
+        var options = {
+            title : 'Histograma de Salario',
+            hAxis : {
+                title : 'Rango',
+            },
+            vAxis : {
+                title : 'Frecuencia'
+            },
+            colors: ['green']
+        };
+        var chart = new google.visualization.Histogram(document
+                .getElementById('histogramchart'));
+        chart.draw(data, options);
+    }
+
+
+    function drawChartSalaryProm() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Empresas');
+        data.addColumn('number', 'Salary');
+
+        Object.keys(salaryProm_data).forEach(function(key) {
+            data.addRow([ key, salaryProm_data[key] ]);
+        });
+
+        var options = {
+            title : 'Numero de empleados por empresa',
+            hAxis : {
+                title : 'Salario promedio',
+            },
+            vAxis : {
+                title : 'Empresas'
+            }
+        };
+        var chart = new google.visualization.BarChart(document
+                .getElementById('salarypromchart'));
+        chart.draw(data, options);
+    }
+
+    function drawChartCountEmployees() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Empresas');
+        data.addColumn('number', 'People');
+
+        Object.keys(employeesCount_data).forEach(function(key) {
+            data.addRow([ key, employeesCount_data[key] ]);
+        });
+
+        var options = {
+            title : 'Numero de empleados por empresa',
+            hAxis : {
+                title : 'Empresas',
+            },
+            vAxis : {
+                title : 'Numero de empleados'
+            }
+        };
+        var chart = new google.visualization.ColumnChart(document
+                .getElementById('employeeschart'));
+        chart.draw(data, options);
+    }
+
+    function drawChartSalary() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Empresas');
+        data.addColumn('number', 'Salary investment');
+
+        Object.keys(salary_data).forEach(function(key) {
+            data.addRow([ key, salary_data[key] ]);
+        });
+
+        var options = {
+            title : 'Gastos en salario de las empresas registras en el sistema'
+        };
+        var chart = new google.visualization.PieChart(document
+                .getElementById('salarychart'));
+        chart.draw(data, options);
+    }
+
+    function drawPieChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Sex');
+        data.addColumn('number', 'People');
+        Object.keys(real_data).forEach(function(key) {
+            data.addRow([ key, real_data[key] ]);
+        });
+        var options = {
+            title : 'Persona por sexo en la base de datos'
+        };
+        var chart = new google.visualization.PieChart(document
+                .getElementById('piechart'));
+        chart.draw(data, options);
+    }
+
+
+</script>
+</body>
+</html>
